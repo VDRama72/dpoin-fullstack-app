@@ -1,0 +1,15 @@
+{
+  "appId": "com.dpoin.admin",
+  "appName": "D'PoIN",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://my-admin-panel-brown.vercel.app/",
+    "cleartext": false,
+    "allowNavigation": [
+      "my-admin-panel-brown.vercel.app",
+      "dpoin-9-backend.onrender.com",
+      "dpoin-backend.onrender.com"
+    ]
+  }
+}

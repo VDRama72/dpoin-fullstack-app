@@ -1,0 +1,63 @@
+﻿// src/pages/public/ProductDetail.css
+
+.product-detail-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.product-image img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-to-cart-btn {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #00b894;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #019875;
+}
+
+.related-products-section {
+  width: 100%;
+  margin-top: 30px;
+}
+
+/* ✅ Responsive untuk HP */
+@media screen and (max-width: 768px) {
+  .product-detail-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-image img {
+    max-width: 90%;
+  }
+
+  .product-info {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
