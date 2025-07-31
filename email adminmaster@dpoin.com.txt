@@ -1,0 +1,10 @@
+"email": "adminmaster@dpoin.com"
+"password": "123456"
+
+
+indahseller@dpoin.com
+pass : 123456
+
+davidpenjual@dpoin.com
+
+	agusdriver@dpoin.com

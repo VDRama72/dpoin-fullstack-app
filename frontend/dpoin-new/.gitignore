@@ -1,6 +1,4 @@
-# ✅ FILE: frontend/.gitignore (Revisi LENGKAP AKHIR)
-
-# HANYA ABAIKAN YANG WAJIB DIABAIKAN
+# ✅ FILE: frontend/.gitignore (FINAL)
 
 # Dependencies
 node_modules/
@@ -13,8 +11,9 @@ build/
 # Environment files (jangan upload file rahasia!)
 .env
 .env.*
+*.local
 
-# OS & IDE
+# OS & IDE files
 .DS_Store
 .vscode/
 .idea/
@@ -25,6 +24,12 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
+# Testing
+coverage/
+
 # Native builds (jika tidak perlu disertakan)
 android/
 ios/
+
+# Vercel cache (kalau ada pakai Vercel CLI)
+.vercel/

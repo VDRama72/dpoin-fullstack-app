@@ -1,0 +1,41 @@
+# Global Node.js dependencies
+node_modules/
+
+# Global environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local # Menangkap semua varian .env.local
+
+# Specific to Backend
+backend/uploads/ # Folder untuk upload pengguna di backend
+backend/Untitled-1.js # File sementara yang tidak perlu di commit
+backend/console.log(data)) # Jika ini nama file yang persis
+backend/echo # Jika ini nama file yang persis
+backend/res.json()) # Jika ini nama file yang persis
+backend/*.log # Log files di backend
+
+# Specific to Frontend (jika tidak tercover oleh aturan global)
+frontend/dpoin-new/dist/ # Output build frontend Vite
+frontend/dpoin-new/build/ # Output build frontend Create React App (jika Anda pakai)
+frontend/node_modules/ # Ini sebenarnya sudah dicover oleh node_modules/ di root, tapi tidak masalah
+frontend/dpoin-new/package-lock.json # Jika Anda menggunakan yarn.lock di root, ini bisa diabaikan
+frontend/dpoin-new/yarn.lock # Jika Anda menggunakan package-lock.json di root, ini bisa diabaikan
+
+# IDE and OS specific files
+.vscode/
+.idea/
+.DS_Store # macOS specific
+Thumbs.db # Windows specific
+
+# Any zip files
+*.zip
+
+# Dump folders
+dump/
+
+# Documents, backups, and other non-code files
+Panduan Lengkap Membuat Aplikasi D'PoIN dari Awal (Frontend + Capacitor).docx
+gambar untuk android/

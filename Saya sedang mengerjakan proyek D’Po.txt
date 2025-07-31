@@ -1,0 +1,35 @@
+Saya sedang mengerjakan proyek D’PoIN (Dompu Pengantaran Online) yang mirip dengan grab atau grabfood dengan aplikasi berbasis React + Vite + Tailwind untuk frontend, dan Express + MongoDB + JWT untuk backend dan saat ini yang kami kerjakan adalah aplikasi D’PoIN yang memiliki halaman etalase utama yang terbagi menjadi tiga bagian: Driver, Store, dan Food.
+
+Kita mulai dari bagian admin dulu ya, saya sudah punya file bagian admin, yang saya sendiri bingung saking banyaknya  file , pokoknya diadmin itu nanti dia bisa melakukan : managemen pengguna (user), managemen produk (baik yang store, seller atau rental car), Managemen pesanan (transaksi baik yang dipesan (order), dibatalkan (cancel), dikirim (on deliver), selesai (completed)) semuanya tampil, manajemen keuangan (finance) baik itu yang sudah (selesai, masih order, dibatalkan, dikirim, semuanya terlihat) dengan jumlah nominalnya tentunya dan ini bisa ditarik atau dirubah oleh admin atau finance jika ada persetujuan dari ceo , manajemen CS dan komplain, dan Manajemen Promo atau Banner inilah inti dari Admin (yang mengambil database dari backend).
+
+------------------------------------------------------------------------------
+Menginstall dari awal android
+rmdir /s /q node_modules # ✅ Hapus folder node_modules juga
+rmdir /s /q dist         # ✅ Hapus folder dist juga
+rmdir /s /q android      # ✅ Hapus folder android
+npm cache clean --force  # ✅ Bersihkan cache npm
+npm install              # ✅ Instal ulang semua library JavaScript
+npm run build            # ✅ Bangun ulang file-file web (INI HARUS BERHASIL TANPA ERROR)
+npx cap add android      # ✅ Buat ulang folder proyek Android
+npx cap sync android     # ✅ Sinkronkan file-file ke proyek Android
+npx cap open android
+
+Setelah ada perubahan di program upload lagi ke android dengan perintah
+
+npm run build
+npx cap sync android
+npx cap open android
+
+perubahan yang terjadi langsung dideploy ke render atau GitHub
+
+git status  >> mengecek file apa saja yang sudah dirubah
+git add .   >> mengambil semua yang sudah dicek oleh git status
+git commit -m "Track all files, update .gitignore"   >> perintah 
+git push origin main  >> perintah yang akan mengirim semua commit dari repositori lokal Anda ke repositori remote di GitHub.
+
+
+untuk menjalankan server di backend
+npm run start
+
+untuk menjalankan server di frontend
+npm run dev

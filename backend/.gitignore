@@ -1,5 +1,3 @@
-# ✅ FILE: backend/.gitignore (Revisi Paling Agresif)
-
 # Node.js dependencies
 node_modules/
 
@@ -23,13 +21,15 @@ yarn-error.log*
 .idea/
 .DS_Store # macOS specific
 
-# ✅ BAGIAN INI KOREKSI UTAMA: Abaikan file-file untracked yang aneh dan ZIP
-# Mengabaikan semua file .zip di direktori ini
-*.zip
-# Mengabaikan file-file debug spesifik (pastikan namanya persis)
-console.log(data))
-echo
-res.json())
+# Uploaded files
+uploads/ # <<< PENTING: TAMBAHKAN INI
 
-# Mengabaikan folder dump (jika masih dibuat)
-dump/ 
+# Temporary / Junk files
+Untitled-1.js # <<< PENTING: TAMBAHKAN INI (berdasarkan output git commit sebelumnya)
+*.zip
+console.log(data)) # Jika ini nama file yang persis
+echo              # Jika ini nama file yang persis
+res.json())       # Jika ini nama file yang persis
+
+# Other directories
+dump/
