@@ -27,6 +27,7 @@ app.use(cors({
         'http://localhost:5173', // Untuk pengembangan lokal
         'http://192.168.58.216:5173', // Jika Anda juga menguji via IP lokal di HP
         'https://my-admin-panel-brown.vercel.app', // ✅ Untuk deployment Vercel Anda
+        'https://dpoin-fullstack-app.onrender.com', // ✅ TAMBAHKAN BARIS INI
         FRONTEND_URL // Gunakan environment variable jika diset di Render/Vercel
     ], 
     credentials: true // Penting jika Anda menggunakan cookie/sesi
@@ -39,6 +40,7 @@ const io = new Server(server, {
         'http://localhost:5173', // Untuk pengembangan lokal
         'http://192.168.58.216:5173', // Jika Anda juga menguji via IP lokal di HP
         'https://my-admin-panel-brown.vercel.app', // ✅ Untuk deployment Vercel Anda
+        'https://dpoin-fullstack-app.onrender.com', // ✅ TAMBAHKAN BARIS INI
         FRONTEND_URL // Gunakan environment variable jika diset di Render/Vercel
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
