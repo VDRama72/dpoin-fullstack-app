@@ -1,7 +1,8 @@
-﻿// ✅ FILE: src/pages/seller/SellerSignup.jsx
+﻿// ✅ FILE: src/pages/seller/SellerSignup.jsx (FINAL FIX)
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 
 export default function SellerSignup() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function SellerSignup() {
     fotoWarung: null,
   });
 
-  const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY'; // GANTI DENGAN API KEY KAMU
+  const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,23 +68,44 @@ export default function SellerSignup() {
   };
 
   const handleSubmit = async () => {
+    // ✅ PERBAIKAN: Hapus validasi untuk fotoKtp dan fotoWarung
     if (!form.name || !form.email || !form.password || !form.namaWarung || !form.alamat || !form.phone) {
       alert('Semua kolom wajib diisi.');
       return;
     }
 
     const formData = new FormData();
-    Object.entries(form).forEach(([key, val]) => {
-      if (val) formData.append(key, val);
-    });
+    
+    // Tambahkan semua data formulir ke FormData
+    formData.append('name', form.name);
+    formData.append('email', form.email);
+    formData.append('password', form.password);
+    formData.append('namaWarung', form.namaWarung);
+    formData.append('alamat', form.alamat);
+    formData.append('phone', form.phone);
+    formData.append('lat', form.lat);
+    formData.append('lon', form.lon);
     formData.append('role', 'penjual');
 
+    // Tambahkan file-file hanya jika ada
+    if (form.fotoKtp) {
+      formData.append('fotoKtp', form.fotoKtp);
+    }
+    if (form.fotoWarung) {
+      formData.append('fotoWarung', form.fotoWarung);
+    }
+
     try {
-      // await axios.post('/api/users', formData);
+      await api.post('/auth/register', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       alert('✅ Pendaftaran berhasil!');
       navigate('/login');
     } catch (err) {
-      console.error(err);
+      console.error('❌ Pendaftaran gagal:', err.response?.data || err.message);
       alert('❌ Pendaftaran gagal.');
     }
   };
@@ -92,7 +114,6 @@ export default function SellerSignup() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6">
         <h2 className="text-2xl font-bold text-indigo-700 mb-4 text-center">🛍️ Pendaftaran Penjual</h2>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <input name="name" type="text" placeholder="Nama Anda" onChange={handleChange} className="border rounded p-2 w-full" />
           <input name="email" type="email" placeholder="Email" onChange={handleChange} className="border rounded p-2 w-full" />
@@ -100,12 +121,8 @@ export default function SellerSignup() {
           <input name="phone" type="text" placeholder="No. HP / WhatsApp" onChange={handleChange} className="border rounded p-2 w-full" />
           <input name="namaWarung" type="text" placeholder="Nama Warung" onChange={handleChange} className="border rounded p-2 w-full" />
           <input name="alamat" type="text" placeholder="Alamat Lengkap" value={form.alamat} onChange={handleChange} className="border rounded p-2 w-full" />
-
           <div className="flex gap-2 items-center">
-            <button
-              onClick={handleDetectLocation}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm"
-            >
+            <button onClick={handleDetectLocation} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
               📍 Deteksi Lokasi
             </button>
             {form.lat && (
@@ -114,7 +131,6 @@ export default function SellerSignup() {
               </span>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700">Upload Foto KTP</label>
             <input name="fotoKtp" type="file" accept="image/*" onChange={handleFileChange} className="mt-1 w-full" />
@@ -124,7 +140,6 @@ export default function SellerSignup() {
             <input name="fotoWarung" type="file" accept="image/*" onChange={handleFileChange} className="mt-1 w-full" />
           </div>
         </div>
-
         <div className="flex gap-4 mt-6">
           <button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full font-semibold">
             ✅ Daftar Sekarang

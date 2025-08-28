@@ -1,14 +1,17 @@
-﻿// ✅ FILE: src/pages/seller/SellerDisclaimer.jsx
+﻿// ✅ FILE: src/pages/seller/SellerDisclaimer.jsx (VERSI AKHIR DAN SEMPURNA)
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import useTitle from '../../hooks/useTitle';
 
 export default function SellerDisclaimer() {
+  useTitle('Syarat & Ketentuan Penjual');
   const navigate = useNavigate();
 
   const handleAgree = () => {
     localStorage.setItem('disclaimerAccepted', 'true');
     window.dispatchEvent(new Event('storage'));
-    navigate('/seller/signup'); // ✅ redirect ke form pendaftaran
+    navigate('/seller/dashboard'); // ✅ PERBAIKAN: Redirect ke dashboard, bukan signup
   };
 
   const handleBack = () => {
