@@ -1,14 +1,13 @@
-// ✅ FILE: backend/middleware/authMiddleware.js
+// ✅ FILE: backend/middleware/authMiddleware.js (VERSI AKHIR DAN SEMPURNA)
 
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Fungsi middleware utama, bisa untuk semua role
 function auth(allowedRoles = []) {
   return async (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Format: Bearer <token>
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({ msg: "Token tidak ditemukan" });
@@ -26,7 +25,11 @@ function auth(allowedRoles = []) {
         return res.status(403).json({ msg: "Akses ditolak (tidak punya izin)" });
       }
 
-      req.user = user;
+      // ✅ PERBAIKAN: Simpan ID sebagai req.user.id untuk akses yang mudah
+      req.user = {
+        id: user._id, // Mengambil ObjectId
+        role: user.role
+      };
       next();
     } catch (err) {
       return res.status(401).json({ msg: "Token tidak valid", error: err.message });
@@ -34,12 +37,11 @@ function auth(allowedRoles = []) {
   };
 }
 
-// Shortcut middleware untuk role-role umum
-const protect = auth(); // Untuk semua user login
+const protect = auth();
 const isAdmin = auth(['admin']);
 const isDriver = auth(['driver']);
 const isFinance = auth(['finance']);
-const isSeller = auth(['seller']);
+const isSeller = auth(['penjual']);
 const isCs = auth(['cs']);
 const isCeo = auth(['ceo']);
 

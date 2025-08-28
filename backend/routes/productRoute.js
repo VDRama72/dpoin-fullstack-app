@@ -1,41 +1,38 @@
-// ✅ FILE: routes/productRoutes.js
+// ✅ FILE: backend/routes/productRoute.js (VERSI AKHIR DAN SEMPURNA)
 
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-const Product = require('../models/Product');
 
-// GET ALL PRODUCTS
-router.get('/', async (req, res) => {
-  try {
-    const products = await Product.find({});
-    res.json(products);
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+// ✅ PERBAIKAN: Impor semua fungsi yang dibutuhkan secara eksplisit
+const { 
+  getAllProducts, 
+  getProductById, 
+  createProductByAdmin, 
+  createProductBySeller,
+  getMyProducts,
+  getMyProductsCount,
+  deleteProduct,
+  updateProduct,
+  updateProductBySeller
+} = require('../controllers/productController');
 
-// GET PRODUCT BY ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
+const { isAdmin, isSeller } = require('../middleware/authMiddleware');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid product ID' });
-  }
+// ✅ Rute yang dilindungi untuk penjual
+router.get('/seller/products/count', isSeller, getMyProductsCount);
+router.get('/seller', isSeller, getMyProducts);
+router.post('/seller', isSeller, upload.single('image'), createProductBySeller);
+router.put('/seller/:id', isSeller, upload.single('image'), updateProductBySeller);
+router.delete('/:id', isSeller, deleteProduct);
 
-  try {
-    const product = await Product.findById(id);
+// ✅ Rute yang dilindungi untuk admin
+router.post('/admin', isAdmin, upload.single('image'), createProductByAdmin);
+router.put('/admin/:id', isAdmin, upload.single('image'), updateProduct);
 
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    res.json(product);
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+// ✅ Rute publik
+router.get('/', getAllProducts);
+router.get('/:id', getProductById);
 
 module.exports = router;
