@@ -1,4 +1,4 @@
-// ✅ FILE: backend/controllers/authController.js (VERSI AKHIR DAN SEMPURNA)
+// ✅ FILE: backend/controllers/authController.js (VERSI AKHIR & SEMPURNA)
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -50,14 +50,16 @@ exports.register = async (req, res) => {
     alamat, 
     phone, 
     lat, 
-    lon 
+    lon,
+    // ✅ REVISI: Tambahkan telegramChatId dari body
+    telegramChatId
   } = req.body;
   const fotoKtpFile = req.files.fotoKtp ? req.files.fotoKtp[0] : null;
   const fotoWarungFile = req.files.fotoWarung ? req.files.fotoWarung[0] : null;
 
   try {
-    // ✅ PERBAIKAN: Hapus validasi untuk lat dan lon jika tidak wajib
-    if (!name || !email || !password || !namaWarung || !alamat || !phone) {
+    // ✅ REVISI: Tambahkan validasi untuk telegramChatId
+    if (!name || !email || !password || !namaWarung || !alamat || !phone || !telegramChatId) {
       return res.status(400).json({ msg: "Semua kolom wajib diisi." });
     }
     const existingUser = await User.findOne({ email });
@@ -81,6 +83,7 @@ exports.register = async (req, res) => {
       lon,
       fotoKtp: fotoKtpPath,
       fotoWarung: fotoWarungPath,
+      telegramChatId, // ✅ REVISI: Simpan telegramChatId
       token: ''
     });
 
