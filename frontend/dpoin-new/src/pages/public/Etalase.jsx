@@ -1,19 +1,11 @@
-﻿// ✅ FILE: src/pages/public/Etalase.jsx (Revisi TERAKHIR - Dengan Perbaikan search dan Error Handling)
+﻿// ✅ FILE: src/pages/public/Etalase.jsx (FINAL DENGAN SEMUA KATEGORI)
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-// import axios from 'axios'; // ❌ HAPUS INI, kita akan menggunakan instance 'api' yang sudah dikonfigurasi
-import api from '../../services/api'; // ✅ PASTIKAN INI DIIMPORT DARI src/services/api.js
+import api from '../../services/api';
 import useTitle from '../../hooks/useTitle';
 import { FaStore } from 'react-icons/fa';
-import FoodCard from '../../components/public/FoodCard'; // Pastikan FoodCard diimport jika digunakan
-
-// ❌ HAPUS BAGIAN INI: Anda tidak perlu membuat instance axios baru di sini.
-//    Ini adalah BUG KRITIS yang membuat aplikasi Anda selalu mencoba localhost.
-// const api = axios.create({
-//   baseURL: 'http://localhost:4000/api',
-// });
-
+import FoodCard from '../../components/public/FoodCard';
 
 export default function Etalase() {
   useTitle('Etalase • D’PoIN');
@@ -23,62 +15,66 @@ export default function Etalase() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // State untuk menyimpan pesan error
+  const [error, setError] = useState(null);
   const [lastUnfinishedOrderId, setLastUnfinishedOrderId] = useState(null);
   const [lastUnfinishedOrderStatus, setLastUnfinishedOrderStatus] = useState(null);
   const [checkingLastOrder, setCheckingLastOrder] = useState(true);
+  
+  // ✅ REVISI: Tambah state untuk filter kategori
+  const [categoryFilter, setCategoryFilter] = useState('Semua');
+
+  // ✅ REVISI: Gabungkan semua kategori
+  const categories = [
+    'Semua',
+    'Makanan',
+    'Minuman',
+    'Snack',
+    'Cemilan',
+    'Sayuran',
+    'Buah-buahan',
+    'Kosmetika',
+    'Electric and Digital'
+  ];
 
   // --- Efek untuk memeriksa dan memuat produk ---
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        setError(null); // Reset error sebelum fetch baru
+        setError(null);
         let url = '/products';
         if (storeIdentifier) {
           url = `/products?storeName=${encodeURIComponent(storeIdentifier)}`;
         }
-        const res = await api.get(url); // Menggunakan instance 'api' yang diimport
+        const res = await api.get(url);
         setProducts(res.data);
         setLoading(false);
       } catch (err) {
-        setLoading(false); // Selesai loading, meskipun error
-        console.error("Etalase: Gagal mengambil produk:", err); // Log error asli
-
-        // ✅ IMPLEMENTASI ERROR HANDLING YANG LEBIH DETAIL
+        setLoading(false);
+        console.error("Etalase: Gagal mengambil produk:", err);
         if (err.response) {
-          // Server merespons dengan status code di luar 2xx (misal: 403, 404, 500)
           const errorMessage = err.response.data.message || JSON.stringify(err.response.data);
-          console.error('Respon error dari server:', err.response.status, errorMessage);
           setError(`Gagal memuat produk: Server merespons dengan status ${err.response.status}. Pesan: ${errorMessage}`);
-          // alert(`Respon error: ${err.response.status} - ${errorMessage}`); // Hindari alert di production, gunakan modal
         } else if (err.request) {
-          // Permintaan dibuat tapi tidak ada respons dari server
-          // Ini sering terjadi karena masalah jaringan, CORS, atau server tidak merespons
-          console.error('Request error (tidak ada respons dari server):', err.request);
           setError('Gagal memuat produk: Tidak dapat terhubung ke server. Periksa koneksi internet atau status backend.');
-          // alert('Request error: Tidak ada respons dari server (mungkin CORS atau koneksi diblokir)'); // Hindari alert
         } else {
-          // Kesalahan lain saat menyiapkan permintaan (misal: URL salah, konfigurasi Axios)
-          console.error('Error umum saat menyiapkan permintaan:', err.message);
           setError(`Gagal memuat produk: Terjadi kesalahan. Pesan: ${err.message}`);
-          // alert('Error umum: ' + err.message); // Hindari alert
         }
       }
     };
     fetchProducts();
-  }, [storeIdentifier]); // Dependensi storeIdentifier agar fetch ulang saat berubah
+  }, [storeIdentifier]);
 
   // --- Efek untuk memeriksa order publik terakhir yang belum selesai ---
   useEffect(() => {
     const checkLastPublicOrder = async () => {
-      setCheckingLastOrder(true); // Mulai memeriksa order
+      setCheckingLastOrder(true);
       const storedOrderId = localStorage.getItem('dpoi_last_public_order_id');
       const storedOrderPhone = localStorage.getItem('dpoi_last_public_order_phone');
 
       if (storedOrderId) {
         try {
-          const res = await api.get(`/orders/${storedOrderId}`); // Menggunakan instance 'api' yang diimport
+          const res = await api.get(`/orders/${storedOrderId}`);
           const orderData = res.data.order || res.data;
 
           const finalStatuses = ['completed', 'cancelled', 'returned'];
@@ -92,12 +88,9 @@ export default function Etalase() {
             console.log("Etalase: Last public order reached final status, cleared from localStorage.");
           }
         } catch (err) {
-          console.error("Etalase: Gagal memeriksa status order terakhir:", err); // Log error asli
-
-          // ✅ IMPLEMENTASI ERROR HANDLING YANG LEBIH DETAIL UNTUK ORDER CHECK
+          console.error("Etalase: Gagal memeriksa status order terakhir:", err);
           if (err.response) {
             const errorMessage = err.response.data.message || JSON.stringify(err.response.data);
-            console.error('Respon error dari server (order check):', err.response.status, errorMessage);
             if (err.response.status === 404) {
               localStorage.removeItem('dpoi_last_public_order_id');
               localStorage.removeItem('dpoi_last_public_order_phone');
@@ -106,34 +99,33 @@ export default function Etalase() {
               setError(`Gagal memuat status pesanan terakhir: Server merespons dengan status ${err.response.status}. Pesan: ${errorMessage}`);
             }
           } else if (err.request) {
-            console.error('Request error (order check - tidak ada respons):', err.request);
             setError('Gagal memuat status pesanan terakhir: Tidak dapat terhubung ke server.');
           } else {
-            console.error('Error umum saat memeriksa order:', err.message);
             setError(`Gagal memuat status pesanan terakhir: Terjadi kesalahan. Pesan: ${err.message}`);
           }
         } finally {
-          setCheckingLastOrder(false); // Selesai memeriksa order, terlepas dari hasil
+          setCheckingLastOrder(false);
         }
       } else {
-        setCheckingLastOrder(false); // Tidak ada order di localStorage
+        setCheckingLastOrder(false);
       }
     };
 
     checkLastPublicOrder();
-  }, []); // Dependensi kosong agar hanya dijalankan sekali
+  }, []);
 
-  // ✅ PASTIKAN filtered MENGGUNAKAN STATE search yang dideklarasikan
-  const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // ✅ REVISI: Filter produk berdasarkan pencarian DAN kategori
+  const filtered = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    // Pastikan kategori produk di backend disimpan dalam lowercase
+    const matchesCategory = categoryFilter === 'Semua' || (p.category && p.category.toLowerCase() === categoryFilter.toLowerCase());
+    return matchesSearch && matchesCategory;
+  });
 
-  // Perbarui kondisi loading/error untuk mencakup checkingLastOrder
   if (loading || checkingLastOrder) {
     return <div className="p-4 text-gray-600">Memuat {storeIdentifier ? 'produk toko' : 'etalase'}...</div>;
   }
   if (error) {
-    // Tampilkan pesan error di UI jika ada
     return <div className="p-4 text-red-500 font-semibold">{error}</div>;
   }
 
@@ -211,6 +203,23 @@ export default function Etalase() {
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+        </div>
+
+        {/* ✅ REVISI: Kategori Produk */}
+        <div className="mb-6 flex space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+            {categories.map(category => (
+                <button
+                    key={category}
+                    onClick={() => setCategoryFilter(category)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200
+                        ${categoryFilter === category 
+                            ? 'bg-indigo-600 text-white shadow' 
+                            : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-100'}`
+                    }
+                >
+                    {category}
+                </button>
+            ))}
         </div>
 
         {filtered.length === 0 ? (
