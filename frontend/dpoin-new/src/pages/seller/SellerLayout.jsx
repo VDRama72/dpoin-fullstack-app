@@ -9,11 +9,14 @@ export default function SellerLayout() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  const handleLogout = () => {
-    localStorage.clear();
+ const handleLogout = () => {
+    localStorage.setItem('isLoggedOut', 'true');
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
     window.dispatchEvent(new Event('storage'));
-    navigate('/login', { replace: true });
+    window.location.href = '/';
   };
+
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">

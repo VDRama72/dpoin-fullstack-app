@@ -8,11 +8,21 @@ export default function SellerDisclaimer() {
   useTitle('Syarat & Ketentuan Penjual');
   const navigate = useNavigate();
 
-  const handleAgree = () => {
+ const handleAgree = () => {
     localStorage.setItem('disclaimerAccepted', 'true');
     window.dispatchEvent(new Event('storage'));
-    navigate('/seller/dashboard'); // ✅ PERBAIKAN: Redirect ke dashboard, bukan signup
+    
+    // ✅ PERBAIKAN: Periksa apakah user sudah login
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Jika sudah login, redirect ke dashboard
+      navigate('/seller/dashboard');
+    } else {
+      // Jika belum login, redirect ke signup
+      navigate('/seller/signup');
+    }
   };
+
 
   const handleBack = () => {
     navigate('/etalase');
