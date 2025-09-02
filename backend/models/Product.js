@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
   storeName: { type: String, required: true },
   category: {
     type: String,
-    enum: ['makanan', 'minuman', 'snack', 'camilan'],
+    enum: ['makanan', 'minuman', 'snack', 'cemilan', 'sayuran', 'buah-buahan', 'kosmetika', 'electric and digital'],
     required: true
   },
   image: { type: String },
