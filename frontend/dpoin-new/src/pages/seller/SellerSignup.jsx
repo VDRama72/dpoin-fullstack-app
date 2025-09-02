@@ -1,9 +1,10 @@
-﻿// ✅ FILE: src/pages/seller/SellerSignup.jsx (REVISI AKHIR & SEMPURNA)
+﻿// ✅ FILE: src/pages/seller/SellerSignup.jsx (FINAL DENGAN REVISI DESAIN)
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import useTitle from '../../hooks/useTitle'; 
+import { FaMapMarkerAlt } from 'react-icons/fa'; // ✅ Import ikon untuk tombol
 
 export default function SellerSignup() {
   useTitle('Daftar Penjual - D’PoIN');
@@ -149,28 +150,32 @@ export default function SellerSignup() {
                 placeholder="Alamat Lengkap" 
                 value={form.alamat} 
                 onChange={handleChange} 
-                className="border rounded p-2 w-full pr-14" 
+                className="border rounded p-2 w-full" 
                 required 
               />
+            </div>
+            
+            <div className="col-span-1 md:col-span-2 flex flex-col items-center">
+              {/* ✅ REVISI: Ubah posisi dan style tombol */}
               <button 
                 type="button" 
                 onClick={handleDetectLocation} 
-                className="absolute right-0 top-0 h-full bg-blue-600 text-white px-3 py-2 rounded-r-md hover:bg-blue-700 transition flex items-center justify-center text-sm"
+                className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
                 disabled={isLoading}
               >
-                📍
+                <FaMapMarkerAlt /> Deteksi Lokasi Saat Ini
               </button>
-            </div>
-            
-            <div className="col-span-1 md:col-span-2">
+              {/* ✅ KETERANGAN BARU: Wajib diklik */}
+              <p className="text-xs text-gray-500 mt-1 mb-2">
+                <span className="text-red-500 font-bold">(Wajib diklik)</span> untuk mendapatkan koordinat lokasi Anda.
+              </p>
               {form.lat && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mt-1">
                   ✅ Lokasi: {form.alamat} ({form.lat.toFixed(4)}, {form.lon.toFixed(4)})
                 </p>
               )}
             </div>
 
-            {/* ✅ REVISI: Tambahkan keterangan yang lebih jelas */}
             <div className="col-span-1 md:col-span-2 mt-2 p-4 bg-gray-100 rounded-lg border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-800 mb-2">🔔 Notifikasi Pesanan via Telegram</h3>
               <p className="text-sm text-gray-600 mb-2">
