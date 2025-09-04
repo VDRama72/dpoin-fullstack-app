@@ -1,4 +1,4 @@
-﻿// ✅ FILE: src/pages/public/Etalase.jsx (FINAL DENGAN COMBO BOX KATEGORI)
+﻿// ✅ FILE: src/pages/public/Etalase.jsx (FINAL DENGAN GRID + PAGINATION)
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -22,17 +22,18 @@ export default function Etalase() {
   // ✅ REVISI: Tambah state untuk filter kategori
   const [categoryFilter, setCategoryFilter] = useState('Semua');
 
-  // ✅ REVISI: Gabungkan semua kategori
+  // ✅ REVISI: Gabungkan semua kategori + urut abjad
   const categories = [
     'Semua',
+    'Buah-buahan',
+    'Cemilan',
+    'Electric and Digital',
+    'Fashion',
+    'Kosmetika',
     'Makanan',
     'Minuman',
-    'Snack',
-    'Cemilan',
     'Sayuran',
-    'Buah-buahan',
-    'Kosmetika',
-    'Electric and Digital'
+    'Snack'
   ];
 
   // --- Efek untuk memeriksa dan memuat produk ---
@@ -117,6 +118,21 @@ export default function Etalase() {
       (p.category && p.category.toLowerCase() === categoryFilter.toLowerCase());
     return matchesSearch && matchesCategory;
   });
+
+  // ✅ REVISI: Pagination (4 produk per halaman)
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 4;
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filtered.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filtered.length / productsPerPage);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+  const goToPrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
 
   if (loading || checkingLastOrder) {
     return <div className="p-4 text-gray-600">Memuat {storeIdentifier ? 'produk toko' : 'etalase'}...</div>;
@@ -216,16 +232,41 @@ export default function Etalase() {
           </select>
         </div>
 
-        {filtered.length === 0 ? (
+        {currentProducts.length === 0 ? (
           <p className="text-center text-gray-500 mt-10">Maaf, produk tidak ditemukan.</p>
         ) : (
-          <div className="flex space-x-3 overflow-x-auto pb-2 -mx-1 px-1">
-            {filtered.map(prod => (
-              <div key={prod._id} className="flex-shrink-0">
-                <FoodCard food={prod} onAddToCart={() => {}} />
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {currentProducts.map(prod => (
+                <div key={prod._id}>
+                  <FoodCard food={prod} onAddToCart={() => {}} />
+                </div>
+              ))}
+            </div>
+
+            {/* ✅ Pagination Control */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <button
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                  Prev
+                </button>
+                <span className="text-sm text-gray-600">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                  Next
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </section>
 
