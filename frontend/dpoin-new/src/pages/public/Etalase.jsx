@@ -1,10 +1,9 @@
-﻿// ✅ FILE: src/pages/public/Etalase.jsx (FINAL DENGAN SEMUA KATEGORI)
+﻿// ✅ FILE: src/pages/public/Etalase.jsx (FINAL DENGAN COMBO BOX KATEGORI)
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 import useTitle from '../../hooks/useTitle';
-import { FaStore } from 'react-icons/fa';
 import FoodCard from '../../components/public/FoodCard';
 
 export default function Etalase() {
@@ -19,7 +18,7 @@ export default function Etalase() {
   const [lastUnfinishedOrderId, setLastUnfinishedOrderId] = useState(null);
   const [lastUnfinishedOrderStatus, setLastUnfinishedOrderStatus] = useState(null);
   const [checkingLastOrder, setCheckingLastOrder] = useState(true);
-  
+
   // ✅ REVISI: Tambah state untuk filter kategori
   const [categoryFilter, setCategoryFilter] = useState('Semua');
 
@@ -70,13 +69,11 @@ export default function Etalase() {
     const checkLastPublicOrder = async () => {
       setCheckingLastOrder(true);
       const storedOrderId = localStorage.getItem('dpoi_last_public_order_id');
-      const storedOrderPhone = localStorage.getItem('dpoi_last_public_order_phone');
 
       if (storedOrderId) {
         try {
           const res = await api.get(`/orders/${storedOrderId}`);
           const orderData = res.data.order || res.data;
-
           const finalStatuses = ['completed', 'cancelled', 'returned'];
 
           if (orderData && !finalStatuses.includes(orderData.status)) {
@@ -85,17 +82,15 @@ export default function Etalase() {
           } else {
             localStorage.removeItem('dpoi_last_public_order_id');
             localStorage.removeItem('dpoi_last_public_order_phone');
-            console.log("Etalase: Last public order reached final status, cleared from localStorage.");
           }
         } catch (err) {
           console.error("Etalase: Gagal memeriksa status order terakhir:", err);
           if (err.response) {
-            const errorMessage = err.response.data.message || JSON.stringify(err.response.data);
             if (err.response.status === 404) {
               localStorage.removeItem('dpoi_last_public_order_id');
               localStorage.removeItem('dpoi_last_public_order_phone');
-              console.log("Etalase: Order terakhir tidak ditemukan (404), dihapus dari localStorage.");
             } else {
+              const errorMessage = err.response.data.message || JSON.stringify(err.response.data);
               setError(`Gagal memuat status pesanan terakhir: Server merespons dengan status ${err.response.status}. Pesan: ${errorMessage}`);
             }
           } else if (err.request) {
@@ -117,8 +112,9 @@ export default function Etalase() {
   // ✅ REVISI: Filter produk berdasarkan pencarian DAN kategori
   const filtered = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    // Pastikan kategori produk di backend disimpan dalam lowercase
-    const matchesCategory = categoryFilter === 'Semua' || (p.category && p.category.toLowerCase() === categoryFilter.toLowerCase());
+    const matchesCategory =
+      categoryFilter === 'Semua' ||
+      (p.category && p.category.toLowerCase() === categoryFilter.toLowerCase());
     return matchesSearch && matchesCategory;
   });
 
@@ -171,25 +167,25 @@ export default function Etalase() {
         </div>
       </section>
 
-      {/* BANNER / TOMBOL LANJUTKAN PESANAN ANDA */}
+      {/* Banner / Lanjutkan Pesanan */}
       {lastUnfinishedOrderId && (
         <div className="max-w-6xl mx-auto px-4 mb-6">
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-                <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="font-semibold text-sm sm:text-base">
+              </svg>
+              <p className="font-semibold text-sm sm:text-base">
                 Anda memiliki pesanan terakhir yang belum selesai! (Status: {lastUnfinishedOrderStatus || 'Menunggu'})
-                </p>
+              </p>
             </div>
             <button
-                onClick={() => navigate(`/order-success/${lastUnfinishedOrderId}`)}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base w-full sm:w-auto"
+              onClick={() => navigate(`/order-success/${lastUnfinishedOrderId}`)}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base w-full sm:w-auto"
             >
-                Lanjutkan Pesanan
+              Lanjutkan Pesanan
             </button>
-            </div>
+          </div>
         </div>
       )}
 
@@ -205,21 +201,19 @@ export default function Etalase() {
           />
         </div>
 
-        {/* ✅ REVISI: Kategori Produk */}
-        <div className="mb-6 flex space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+        {/* ✅ REVISI: Kategori Produk jadi ComboBox */}
+        <div className="mb-6">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="w-full sm:w-auto border border-gray-300 rounded-md px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
             {categories.map(category => (
-                <button
-                    key={category}
-                    onClick={() => setCategoryFilter(category)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200
-                        ${categoryFilter === category 
-                            ? 'bg-indigo-600 text-white shadow' 
-                            : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-100'}`
-                    }
-                >
-                    {category}
-                </button>
+              <option key={category} value={category}>
+                {category}
+              </option>
             ))}
+          </select>
         </div>
 
         {filtered.length === 0 ? (
